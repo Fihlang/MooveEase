@@ -1,92 +1,116 @@
-<nav class="navbar">
-  <div class="navbar-container">
-    <a class="navbar-brand" routerLink="/">
-      <span class="logo">MoveEase</span>
-    </a>
-    
-    <!-- Desktop Navigation -->
-    <div class="desktop-nav">
-      <ng-container *ngIf="currentUser; else loggedOut">
-        <!-- Logged in links -->
-        <a class="nav-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a>
-        
-        <!-- Customer-specific links -->
-        <ng-container *ngIf="currentUser.role === UserRole.CUSTOMER">
-          <a class="nav-link" routerLink="/booking" routerLinkActive="active">Book a Move</a>
-          <a class="nav-link" routerLink="/customer-dashboard" routerLinkActive="active">My Bookings</a>
-        </ng-container>
-        
-        <!-- Mover-specific links -->
-        <ng-container *ngIf="currentUser.role === UserRole.MOVER">
-          <a class="nav-link" routerLink="/mover-dashboard" routerLinkActive="active">Available Jobs</a>
-          <a class="nav-link" routerLink="/my-jobs" routerLinkActive="active">My Jobs</a>
-        </ng-container>
-        
-        <!-- Admin-specific links -->
-        <ng-container *ngIf="currentUser.role === UserRole.ADMIN">
-          <a class="nav-link" routerLink="/admin-dashboard" routerLinkActive="active">Admin Dashboard</a>
-        </ng-container>
-        
-        <div class="user-menu">
-          <span class="user-greeting">Hello, {{currentUser.fullName}}</span>
-          <button class="logout-btn" (click)="logout()">Logout</button>
-        </div>
-      </ng-container>
-      
-      <!-- Logged out template -->
-      <ng-template #loggedOut>
-        <a class="nav-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a>
-        <a class="nav-link" routerLink="/about" routerLinkActive="active">About</a>
-        <a class="nav-link" routerLink="/services" routerLinkActive="active">Services</a>
-        <a class="auth-btn login" routerLink="/auth">Login</a>
-        <a class="auth-btn register" routerLink="/auth">Register</a>
-      </ng-template>
-    </div>
-    
-    <!-- Mobile menu toggle -->
-    <div class="mobile-menu-toggle" (click)="toggleMenu()">
-      <span></span>
-      <span></span>
-      <span></span>
-    </div>
-  </div>
-  
-  <!-- Mobile Navigation Menu -->
-  <div class="mobile-nav" [class.open]="isMenuOpen">
-    <ng-container *ngIf="currentUser; else mobileLoggedOut">
-      <!-- Logged in links -->
-      <a class="nav-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" (click)="isMenuOpen = false">Home</a>
-      
-      <!-- Customer-specific links -->
-      <ng-container *ngIf="currentUser.role === UserRole.CUSTOMER">
-        <a class="nav-link" routerLink="/booking" routerLinkActive="active" (click)="isMenuOpen = false">Book a Move</a>
-        <a class="nav-link" routerLink="/customer-dashboard" routerLinkActive="active" (click)="isMenuOpen = false">My Bookings</a>
-      </ng-container>
-      
-      <!-- Mover-specific links -->
-      <ng-container *ngIf="currentUser.role === UserRole.MOVER">
-        <a class="nav-link" routerLink="/mover-dashboard" routerLinkActive="active" (click)="isMenuOpen = false">Available Jobs</a>
-        <a class="nav-link" routerLink="/my-jobs" routerLinkActive="active" (click)="isMenuOpen = false">My Jobs</a>
-      </ng-container>
-      
-      <!-- Admin-specific links -->
-      <ng-container *ngIf="currentUser.role === UserRole.ADMIN">
-        <a class="nav-link" routerLink="/admin-dashboard" routerLinkActive="active" (click)="isMenuOpen = false">Admin Dashboard</a>
-      </ng-container>
-      
-      <div class="user-info">
-        <span class="user-greeting">Hello, {{currentUser.fullName}}</span>
-        <button class="logout-btn" (click)="logout(); isMenuOpen = false">Logout</button>
+<header class="bg-white shadow-sm sticky top-0 z-50">
+  <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between items-center h-16">
+      <!-- Logo and brand name -->
+      <div class="flex-shrink-0 flex items-center">
+        <a routerLink="/" class="text-primary-600 font-bold text-xl flex items-center">
+          <span class="mr-2">
+            <i class="fas fa-truck text-primary-600"></i>
+          </span>
+          MoveEase
+        </a>
       </div>
-    </ng-container>
-    
-    <!-- Logged out template for mobile -->
-    <ng-template #mobileLoggedOut>
-      <a class="nav-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" (click)="isMenuOpen = false">Home</a>
-      <a class="nav-link" routerLink="/about" routerLinkActive="active" (click)="isMenuOpen = false">About</a>
-      <a class="nav-link" routerLink="/services" routerLinkActive="active" (click)="isMenuOpen = false">Services</a>
-      <a class="auth-btn login" routerLink="/auth" (click)="isMenuOpen = false">Login</a>
-      <a class="auth-btn register" routerLink="/auth" (click)="isMenuOpen = false">Register</a>
-    </ng-template>
+
+      <!-- Desktop Navigation -->
+      <nav class="hidden md:flex space-x-8">
+        <a routerLink="/" routerLinkActive="text-primary-600" [routerLinkActiveOptions]="{exact: true}" 
+           class="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+          Home
+        </a>
+        <a routerLink="/services" routerLinkActive="text-primary-600"
+           class="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+          Services
+        </a>
+        <a routerLink="/about" routerLinkActive="text-primary-600"
+           class="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+          About
+        </a>
+        <a routerLink="/contact" routerLinkActive="text-primary-600"
+           class="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+          Contact
+        </a>
+      </nav>
+
+      <!-- Auth Buttons (Desktop) -->
+      <div class="hidden md:flex items-center space-x-4">
+        <ng-container *ngIf="!currentUser; else userActions">
+          <a routerLink="/auth/login" class="text-gray-700 hover:text-primary-600 px-4 py-2 text-sm font-medium transition-colors">
+            Sign In
+          </a>
+          <a routerLink="/auth/register" 
+             class="bg-primary-600 text-white hover:bg-primary-700 px-4 py-2 rounded-md text-sm font-medium transition-colors">
+            Sign Up
+          </a>
+        </ng-container>
+        <ng-template #userActions>
+          <div class="relative">
+            <button (click)="navigateToDashboard()" 
+                    class="text-gray-700 hover:text-primary-600 px-4 py-2 text-sm font-medium transition-colors">
+              Dashboard
+            </button>
+            <button (click)="logout()" class="text-gray-700 hover:text-red-600 px-4 py-2 text-sm font-medium transition-colors">
+              Sign Out
+            </button>
+          </div>
+        </ng-template>
+      </div>
+
+      <!-- Mobile Menu Button -->
+      <div class="flex md:hidden">
+        <button (click)="toggleMenu()" type="button" 
+                class="text-gray-500 hover:text-primary-600 focus:outline-none" 
+                aria-controls="mobile-menu" [attr.aria-expanded]="isMenuOpen">
+          <span class="sr-only">Open main menu</span>
+          <svg *ngIf="!isMenuOpen" class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+          <svg *ngIf="isMenuOpen" class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+    </div>
   </div>
-</nav>
+
+  <!-- Mobile Menu -->
+  <div class="md:hidden" [ngClass]="{'block': isMenuOpen, 'hidden': !isMenuOpen}" id="mobile-menu">
+    <div class="px-2 pt-2 pb-3 space-y-1">
+      <a routerLink="/" routerLinkActive="bg-primary-50 text-primary-600" [routerLinkActiveOptions]="{exact: true}"
+         class="block px-3 py-2 rounded-md text-base font-medium" (click)="closeMenu()">
+        Home
+      </a>
+      <a routerLink="/services" routerLinkActive="bg-primary-50 text-primary-600"
+         class="block px-3 py-2 rounded-md text-base font-medium" (click)="closeMenu()">
+        Services
+      </a>
+      <a routerLink="/about" routerLinkActive="bg-primary-50 text-primary-600"
+         class="block px-3 py-2 rounded-md text-base font-medium" (click)="closeMenu()">
+        About
+      </a>
+      <a routerLink="/contact" routerLinkActive="bg-primary-50 text-primary-600"
+         class="block px-3 py-2 rounded-md text-base font-medium" (click)="closeMenu()">
+        Contact
+      </a>
+      
+      <!-- Auth Buttons (Mobile) -->
+      <div class="border-t border-gray-200 pt-4 pb-2">
+        <ng-container *ngIf="!currentUser; else mobileUserActions">
+          <a routerLink="/auth/login" class="block px-3 py-2 rounded-md text-base font-medium" (click)="closeMenu()">
+            Sign In
+          </a>
+          <a routerLink="/auth/register" class="block px-3 py-2 rounded-md text-base font-medium text-primary-600" (click)="closeMenu()">
+            Sign Up
+          </a>
+        </ng-container>
+        <ng-template #mobileUserActions>
+          <a (click)="navigateToDashboard()" class="block px-3 py-2 rounded-md text-base font-medium">
+            Dashboard
+          </a>
+          <a (click)="logout()" class="block px-3 py-2 rounded-md text-base font-medium text-red-600">
+            Sign Out
+          </a>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+</header>
