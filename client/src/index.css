@@ -1,0 +1,133 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 0 0% 100%;
+  --foreground: 20 14.3% 4.1%;
+  --muted: 60 4.8% 95.9%;
+  --muted-foreground: 25 5.3% 44.7%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 20 14.3% 4.1%;
+  --card: 0 0% 100%;
+  --card-foreground: 20 14.3% 4.1%;
+  --border: 20 5.9% 90%;
+  --input: 20 5.9% 90%;
+  --primary: 231 48% 56%;  /* Adjusted to match MoveEase primary color */
+  --primary-foreground: 0 0% 100%;
+  --secondary: 60 4.8% 95.9%;
+  --secondary-foreground: 24 9.8% 10%;
+  --accent: 45 93% 47%;  /* Adjusted to match MoveEase accent color */
+  --accent-foreground: 24 9.8% 10%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 60 9.1% 97.8%;
+  --ring: 231 48% 56%;
+  --radius: 0.5rem;
+  --chart-1: 231 48% 56%;
+  --chart-2: 160 60% 38%;
+  --chart-3: 45 93% 47%;
+  --chart-4: 10 84% 60%;
+  --chart-5: 271 91% 65%;
+  --sidebar-background: 240 5.9% 10%;
+  --sidebar-foreground: 0 0% 98%;
+  --sidebar-primary: 231 48% 56%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 231 48% 35%;
+  --sidebar-accent-foreground: 0 0% 100%;
+  --sidebar-border: 240 3.7% 15.9%;
+  --sidebar-ring: 231 48% 56%;
+}
+
+.dark {
+  --background: 240 10% 3.9%;
+  --foreground: 0 0% 98%;
+  --muted: 240 3.7% 15.9%;
+  --muted-foreground: 240 5% 64.9%;
+  --popover: 240 10% 3.9%;
+  --popover-foreground: 0 0% 98%;
+  --card: 240 10% 3.9%;
+  --card-foreground: 0 0% 98%;
+  --border: 240 3.7% 15.9%;
+  --input: 240 3.7% 15.9%;
+  --primary: 231 48% 56%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 240 3.7% 15.9%;
+  --secondary-foreground: 0 0% 98%;
+  --accent: 45 93% 47%;
+  --accent-foreground: 24 9.8% 10%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 0 0% 98%;
+  --ring: 231 48% 56%;
+  --chart-1: 231 48% 56%;
+  --chart-2: 160 60% 38%;
+  --chart-3: 45 93% 47%;
+  --chart-4: 10 84% 60%;
+  --chart-5: 271 91% 65%;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+  }
+}
+
+/* Custom styles */
+.hero-clip-path {
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 calc(100% - 3rem));
+}
+
+.gradient-text {
+  @apply bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent;
+}
+
+/* Animations */
+@keyframes slide-up {
+  from {
+    transform: translateY(10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.5s ease-out forwards;
+}
+
+/* Service cards hover effects */
+.service-card {
+  @apply transition-all duration-300;
+}
+
+.service-card:hover {
+  @apply transform scale-105 shadow-md;
+}
+
+/* Steps in booking flow */
+.step-active {
+  @apply bg-primary text-white;
+}
+
+.step-completed {
+  @apply bg-primary text-white;
+}
+
+.step-inactive {
+  @apply bg-gray-200 text-gray-500;
+}
+
+/* Hide scrollbar but allow scrolling */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

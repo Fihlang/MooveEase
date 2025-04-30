@@ -1,0 +1,186 @@
+<div class="dashboard-container">
+  <div class="dashboard-header">
+    <h1 class="dashboard-title">Mover <span class="text-gradient">Dashboard</span></h1>
+  </div>
+  
+  <!-- Error Message -->
+  <div *ngIf="errorMessage" class="error-message">
+    {{ errorMessage }}
+  </div>
+  
+  <!-- Tabs -->
+  <div class="dashboard-tabs">
+    <button 
+      class="tab-btn" 
+      [class.active]="activeTab === 'assigned'"
+      (click)="setActiveTab('assigned')"
+    >
+      My Jobs
+    </button>
+    <button 
+      class="tab-btn" 
+      [class.active]="activeTab === 'available'"
+      (click)="setActiveTab('available')"
+    >
+      Available Jobs
+    </button>
+  </div>
+  
+  <!-- Assigned Orders Tab -->
+  <div *ngIf="activeTab === 'assigned'" class="orders-container">
+    <h2 class="section-title">My Assigned Jobs</h2>
+    
+    <!-- Loading State -->
+    <div *ngIf="isLoadingAssigned" class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading your jobs...</p>
+    </div>
+    
+    <!-- Empty State -->
+    <div *ngIf="assignedOrders.length === 0 && !isLoadingAssigned" class="empty-state">
+      <h3>You don't have any assigned jobs yet</h3>
+      <p>Check the available jobs tab to find jobs you can accept.</p>
+    </div>
+    
+    <!-- Orders List -->
+    <div *ngIf="assignedOrders.length > 0 && !isLoadingAssigned" class="orders-grid">
+      <div class="order-card" *ngFor="let order of assignedOrders">
+        <div class="order-header">
+          <div class="order-id">Order #{{ order.id }}</div>
+          <div class="order-status" [ngClass]="getStatusClass(order.status)">
+            {{ getStatusText(order.status) }}
+          </div>
+        </div>
+        
+        <div class="order-details">
+          <div class="detail-row">
+            <div class="detail-label">Pickup Date:</div>
+            <div class="detail-value">{{ formatDate(order.pickupDate) }}</div>
+          </div>
+          
+          <div class="detail-row">
+            <div class="detail-label">Time:</div>
+            <div class="detail-value">{{ order.preferredTime }}</div>
+          </div>
+          
+          <div class="detail-row">
+            <div class="detail-label">Furniture:</div>
+            <div class="detail-value">{{ order.furnitureType }}</div>
+          </div>
+          
+          <div class="detail-row">
+            <div class="detail-label">From:</div>
+            <div class="detail-value address">{{ order.pickupAddress }}</div>
+          </div>
+          
+          <div class="detail-row">
+            <div class="detail-label">To:</div>
+            <div class="detail-value address">{{ order.dropoffAddress }}</div>
+          </div>
+          
+          <div class="detail-row" *ngIf="order.price">
+            <div class="detail-label">Earnings:</div>
+            <div class="detail-value price">${{ order.price.toFixed(2) }}</div>
+          </div>
+        </div>
+        
+        <div class="order-actions">
+          <button 
+            *ngIf="order.status === 'accepted'" 
+            class="btn btn-primary" 
+            [disabled]="isUpdating"
+            (click)="startOrder(order.id)"
+          >
+            Start Job
+          </button>
+          
+          <button 
+            *ngIf="order.status === 'in_progress'" 
+            class="btn btn-success" 
+            [disabled]="isUpdating"
+            (click)="completeOrder(order.id)"
+          >
+            Complete Job
+          </button>
+          
+          <button 
+            *ngIf="order.status === 'in_progress'" 
+            class="btn btn-outline" 
+            (click)="updateTracking(order.id)"
+          >
+            Update Location
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Available Orders Tab -->
+  <div *ngIf="activeTab === 'available'" class="orders-container">
+    <h2 class="section-title">Available Jobs</h2>
+    
+    <!-- Loading State -->
+    <div *ngIf="isLoadingAvailable" class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading available jobs...</p>
+    </div>
+    
+    <!-- Empty State -->
+    <div *ngIf="availableOrders.length === 0 && !isLoadingAvailable" class="empty-state">
+      <h3>No available jobs at the moment</h3>
+      <p>Check back later for new job opportunities.</p>
+    </div>
+    
+    <!-- Orders List -->
+    <div *ngIf="availableOrders.length > 0 && !isLoadingAvailable" class="orders-grid">
+      <div class="order-card" *ngFor="let order of availableOrders">
+        <div class="order-header">
+          <div class="order-id">Order #{{ order.id }}</div>
+          <div class="order-status status-pending">Available</div>
+        </div>
+        
+        <div class="order-details">
+          <div class="detail-row">
+            <div class="detail-label">Pickup Date:</div>
+            <div class="detail-value">{{ formatDate(order.pickupDate) }}</div>
+          </div>
+          
+          <div class="detail-row">
+            <div class="detail-label">Time:</div>
+            <div class="detail-value">{{ order.preferredTime }}</div>
+          </div>
+          
+          <div class="detail-row">
+            <div class="detail-label">Furniture:</div>
+            <div class="detail-value">{{ order.furnitureType }}</div>
+          </div>
+          
+          <div class="detail-row">
+            <div class="detail-label">From:</div>
+            <div class="detail-value address">{{ order.pickupAddress }}</div>
+          </div>
+          
+          <div class="detail-row">
+            <div class="detail-label">To:</div>
+            <div class="detail-value address">{{ order.dropoffAddress }}</div>
+          </div>
+          
+          <div class="detail-row" *ngIf="order.price">
+            <div class="detail-label">Earnings:</div>
+            <div class="detail-value price">${{ order.price.toFixed(2) }}</div>
+          </div>
+        </div>
+        
+        <div class="order-actions">
+          <button 
+            class="btn btn-primary" 
+            [disabled]="isAccepting"
+            (click)="acceptOrder(order.id)"
+          >
+            {{ isAccepting ? 'Accepting...' : 'Accept Job' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
