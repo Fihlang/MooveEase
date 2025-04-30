@@ -1,204 +1,294 @@
-<div class="dashboard-container">
+<div class="admin-dashboard-container">
+  <!-- Main dashboard header -->
   <div class="dashboard-header">
-    <h1 class="dashboard-title">Admin <span class="text-gradient">Dashboard</span></h1>
+    <h1>Admin Dashboard</h1>
+    <div class="actions">
+      <button mat-raised-button color="primary" (click)="loadDashboardData()">
+        <mat-icon>refresh</mat-icon> Refresh Data
+      </button>
+    </div>
   </div>
   
-  <!-- Statistics Cards -->
+  <!-- Stats cards -->
   <div class="stats-container">
     <div class="stats-row">
-      <div class="stats-card primary">
-        <div class="stats-value">{{ orderStats.totalOrders }}</div>
-        <div class="stats-label">Total Orders</div>
-      </div>
+      <mat-card class="stats-card">
+        <mat-card-content>
+          <div class="stat-value">{{ userStats.totalUsers }}</div>
+          <div class="stat-label">Total Users</div>
+        </mat-card-content>
+      </mat-card>
       
-      <div class="stats-card success">
-        <div class="stats-value">{{ orderStats.completedOrders }}</div>
-        <div class="stats-label">Completed</div>
-      </div>
+      <mat-card class="stats-card">
+        <mat-card-content>
+          <div class="stat-value">{{ userStats.customers }}</div>
+          <div class="stat-label">Customers</div>
+        </mat-card-content>
+      </mat-card>
       
-      <div class="stats-card warning">
-        <div class="stats-value">{{ orderStats.pendingOrders }}</div>
-        <div class="stats-label">Pending</div>
-      </div>
+      <mat-card class="stats-card">
+        <mat-card-content>
+          <div class="stat-value">{{ userStats.movers }}</div>
+          <div class="stat-label">Movers</div>
+        </mat-card-content>
+      </mat-card>
       
-      <div class="stats-card info">
-        <div class="stats-value">{{ orderStats.activeOrders }}</div>
-        <div class="stats-label">Active</div>
-      </div>
-    </div>
-    
-    <div class="stats-row">
-      <div class="stats-card revenue">
-        <div class="stats-value">${{ orderStats.totalRevenue.toFixed(2) }}</div>
-        <div class="stats-label">Total Revenue</div>
-      </div>
+      <mat-card class="stats-card">
+        <mat-card-content>
+          <div class="stat-value">{{ orderStats.totalOrders }}</div>
+          <div class="stat-label">Total Orders</div>
+        </mat-card-content>
+      </mat-card>
       
-      <div class="stats-card purple">
-        <div class="stats-value">{{ userStats.totalUsers }}</div>
-        <div class="stats-label">Total Users</div>
-      </div>
+      <mat-card class="stats-card">
+        <mat-card-content>
+          <div class="stat-value">{{ orderStats.pendingOrders }}</div>
+          <div class="stat-label">Pending Orders</div>
+        </mat-card-content>
+      </mat-card>
       
-      <div class="stats-card blue">
-        <div class="stats-value">{{ userStats.customers }}</div>
-        <div class="stats-label">Customers</div>
-      </div>
-      
-      <div class="stats-card orange">
-        <div class="stats-value">{{ userStats.movers }}</div>
-        <div class="stats-label">Movers</div>
-      </div>
+      <mat-card class="stats-card revenue-card">
+        <mat-card-content>
+          <div class="stat-value">${{ orderStats.totalRevenue.toFixed(2) }}</div>
+          <div class="stat-label">Total Revenue</div>
+        </mat-card-content>
+      </mat-card>
     </div>
   </div>
   
-  <!-- Tabs -->
-  <div class="dashboard-tabs">
-    <button 
-      class="tab-btn" 
-      [class.active]="activeTab === 'orders'"
-      (click)="setActiveTab('orders')"
-    >
-      Orders
-    </button>
-    <button 
-      class="tab-btn" 
-      [class.active]="activeTab === 'users'"
-      (click)="setActiveTab('users')"
-    >
-      Users
-    </button>
-  </div>
-  
-  <!-- Orders Tab Content -->
-  <div *ngIf="activeTab === 'orders'" class="tab-content">
-    <div class="content-header">
-      <h2>Orders Management</h2>
-      
-      <div class="filters">
-        <label for="orderStatusFilter">Filter by Status:</label>
-        <select id="orderStatusFilter" [(ngModel)]="orderStatusFilter" class="filter-select">
-          <option value="all">All Orders</option>
-          <option value="pending">Pending</option>
-          <option value="accepted">Accepted</option>
-          <option value="in_progress">In Progress</option>
-          <option value="completed">Completed</option>
-          <option value="cancelled">Cancelled</option>
-        </select>
-      </div>
-    </div>
-    
-    <!-- Orders Error -->
-    <div *ngIf="ordersError" class="error-message">
-      {{ ordersError }}
-    </div>
-    
-    <!-- Loading State -->
-    <div *ngIf="isLoadingOrders" class="loading-state">
-      <div class="spinner"></div>
-      <p>Loading orders...</p>
-    </div>
-    
-    <!-- Empty State -->
-    <div *ngIf="filteredOrders.length === 0 && !isLoadingOrders" class="empty-state">
-      <h3>No orders found</h3>
-      <p *ngIf="orderStatusFilter !== 'all'">Try changing your filter or check back later.</p>
-    </div>
-    
-    <!-- Orders Table -->
-    <div *ngIf="filteredOrders.length > 0 && !isLoadingOrders" class="table-responsive">
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Customer</th>
-            <th>Mover</th>
-            <th>Pickup Date</th>
-            <th>Furniture Type</th>
-            <th>Status</th>
-            <th>Price</th>
-            <th>Created</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let order of filteredOrders">
-            <td>{{ order.id }}</td>
-            <td>{{ order.customerId }}</td>
-            <td>{{ order.moverId || '-' }}</td>
-            <td>{{ formatDate(order.pickupDate) }}</td>
-            <td>{{ order.furnitureType }}</td>
-            <td>
-              <span class="status-badge" [ngClass]="getStatusClass(order.status)">
-                {{ order.status }}
-              </span>
-            </td>
-            <td>${{ order.price?.toFixed(2) || '-' }}</td>
-            <td>{{ formatDate(order.createdAt) }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-  
-  <!-- Users Tab Content -->
-  <div *ngIf="activeTab === 'users'" class="tab-content">
-    <div class="content-header">
-      <h2>Users Management</h2>
-      
-      <div class="filters">
-        <label for="userRoleFilter">Filter by Role:</label>
-        <select id="userRoleFilter" [(ngModel)]="userRoleFilter" class="filter-select">
-          <option value="all">All Users</option>
-          <option [value]="'customer'">Customers</option>
-          <option [value]="'mover'">Movers</option>
-          <option [value]="'admin'">Admins</option>
-        </select>
-      </div>
-    </div>
-    
-    <!-- Users Error -->
-    <div *ngIf="usersError" class="error-message">
-      {{ usersError }}
-    </div>
-    
-    <!-- Loading State -->
-    <div *ngIf="isLoadingUsers" class="loading-state">
-      <div class="spinner"></div>
-      <p>Loading users...</p>
-    </div>
-    
-    <!-- Empty State -->
-    <div *ngIf="filteredUsers.length === 0 && !isLoadingUsers" class="empty-state">
-      <h3>No users found</h3>
-      <p *ngIf="userRoleFilter !== 'all'">Try changing your filter or check back later.</p>
-    </div>
-    
-    <!-- Users Table -->
-    <div *ngIf="filteredUsers.length > 0 && !isLoadingUsers" class="table-responsive">
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Username</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Role</th>
-            <th>Created</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let user of filteredUsers">
-            <td>{{ user.id }}</td>
-            <td>{{ user.username }}</td>
-            <td>{{ user.name }}</td>
-            <td>{{ user.email }}</td>
-            <td>
-              <span class="role-badge" [ngClass]="getRoleClass(user.role)">
-                {{ user.role }}
-              </span>
-            </td>
-            <td>{{ formatDate(user.createdAt) }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
+  <!-- Main content tabs -->
+  <mat-card class="main-content-card">
+    <mat-card-content>
+      <mat-tab-group [selectedIndex]="activeTab === 'orders' ? 0 : 1" (selectedIndexChange)="setActiveTab($event === 0 ? 'orders' : 'users')">
+        <!-- Orders Tab -->
+        <mat-tab label="Orders">
+          <div class="tab-content">
+            <div class="filter-container">
+              <mat-form-field appearance="outline">
+                <mat-label>Filter by Status</mat-label>
+                <mat-select [(ngModel)]="orderStatusFilter" (selectionChange)="filterOrders()">
+                  <mat-option value="all">All Orders</mat-option>
+                  <mat-option value="pending">Pending</mat-option>
+                  <mat-option value="accepted">Accepted</mat-option>
+                  <mat-option value="in_progress">In Progress</mat-option>
+                  <mat-option value="completed">Completed</mat-option>
+                  <mat-option value="cancelled">Cancelled</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+            
+            <div *ngIf="isLoadingOrders" class="loading-container">
+              <mat-spinner diameter="40"></mat-spinner>
+              <p>Loading orders...</p>
+            </div>
+            
+            <div *ngIf="!isLoadingOrders && ordersError" class="error-container">
+              <mat-icon color="warn">error</mat-icon>
+              <p>{{ ordersError }}</p>
+              <button mat-raised-button color="primary" (click)="loadDashboardData()">Try Again</button>
+            </div>
+            
+            <div *ngIf="!isLoadingOrders && !ordersError && filteredOrders.length === 0" class="empty-container">
+              <mat-icon>inbox</mat-icon>
+              <p>No orders found</p>
+            </div>
+            
+            <table mat-table [dataSource]="filteredOrders" class="mat-elevation-z2" *ngIf="!isLoadingOrders && !ordersError && filteredOrders.length > 0">
+              <!-- ID Column -->
+              <ng-container matColumnDef="id">
+                <th mat-header-cell *matHeaderCellDef>ID</th>
+                <td mat-cell *matCellDef="let order">{{ order.id }}</td>
+              </ng-container>
+              
+              <!-- Customer ID Column -->
+              <ng-container matColumnDef="customer">
+                <th mat-header-cell *matHeaderCellDef>Customer</th>
+                <td mat-cell *matCellDef="let order">{{ order.customerId }}</td>
+              </ng-container>
+              
+              <!-- Pickup Column -->
+              <ng-container matColumnDef="pickup">
+                <th mat-header-cell *matHeaderCellDef>Pickup</th>
+                <td mat-cell *matCellDef="let order">{{ order.pickupAddress }}</td>
+              </ng-container>
+              
+              <!-- Dropoff Column -->
+              <ng-container matColumnDef="dropoff">
+                <th mat-header-cell *matHeaderCellDef>Dropoff</th>
+                <td mat-cell *matCellDef="let order">{{ order.dropoffAddress }}</td>
+              </ng-container>
+              
+              <!-- Date Column -->
+              <ng-container matColumnDef="date">
+                <th mat-header-cell *matHeaderCellDef>Date</th>
+                <td mat-cell *matCellDef="let order">{{ formatDate(order.pickupDate) }}</td>
+              </ng-container>
+              
+              <!-- Status Column -->
+              <ng-container matColumnDef="status">
+                <th mat-header-cell *matHeaderCellDef>Status</th>
+                <td mat-cell *matCellDef="let order">
+                  <span class="status-badge" [ngClass]="getStatusClass(order.status)">
+                    {{ order.status }}
+                  </span>
+                </td>
+              </ng-container>
+              
+              <!-- Price Column -->
+              <ng-container matColumnDef="price">
+                <th mat-header-cell *matHeaderCellDef>Price</th>
+                <td mat-cell *matCellDef="let order">${{ order.price ? order.price.toFixed(2) : '-' }}</td>
+              </ng-container>
+              
+              <!-- Payment Status Column -->
+              <ng-container matColumnDef="payment">
+                <th mat-header-cell *matHeaderCellDef>Payment</th>
+                <td mat-cell *matCellDef="let order">{{ order.paymentStatus }}</td>
+              </ng-container>
+              
+              <!-- Actions Column -->
+              <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef>Actions</th>
+                <td mat-cell *matCellDef="let order">
+                  <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Order actions">
+                    <mat-icon>more_vert</mat-icon>
+                  </button>
+                  <mat-menu #menu="matMenu">
+                    <button mat-menu-item>
+                      <mat-icon>visibility</mat-icon>
+                      <span>View Details</span>
+                    </button>
+                    <button mat-menu-item *ngIf="order.status === 'pending'">
+                      <mat-icon>check_circle</mat-icon>
+                      <span>Accept</span>
+                    </button>
+                    <button mat-menu-item *ngIf="order.status !== 'completed' && order.status !== 'cancelled'">
+                      <mat-icon>cancel</mat-icon>
+                      <span>Cancel</span>
+                    </button>
+                  </mat-menu>
+                </td>
+              </ng-container>
+              
+              <tr mat-header-row *matHeaderRowDef="['id', 'customer', 'pickup', 'dropoff', 'date', 'status', 'price', 'payment', 'actions']"></tr>
+              <tr mat-row *matRowDef="let row; columns: ['id', 'customer', 'pickup', 'dropoff', 'date', 'status', 'price', 'payment', 'actions'];"></tr>
+            </table>
+          </div>
+        </mat-tab>
+        
+        <!-- Users Tab -->
+        <mat-tab label="Users">
+          <div class="tab-content">
+            <div class="filter-container">
+              <mat-form-field appearance="outline">
+                <mat-label>Filter by Role</mat-label>
+                <mat-select [(ngModel)]="userRoleFilter" (selectionChange)="filterUsers()">
+                  <mat-option value="all">All Users</mat-option>
+                  <mat-option [value]="'customer'">Customers</mat-option>
+                  <mat-option [value]="'mover'">Movers</mat-option>
+                  <mat-option [value]="'admin'">Admins</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+            
+            <div *ngIf="isLoadingUsers" class="loading-container">
+              <mat-spinner diameter="40"></mat-spinner>
+              <p>Loading users...</p>
+            </div>
+            
+            <div *ngIf="!isLoadingUsers && usersError" class="error-container">
+              <mat-icon color="warn">error</mat-icon>
+              <p>{{ usersError }}</p>
+              <button mat-raised-button color="primary" (click)="loadDashboardData()">Try Again</button>
+            </div>
+            
+            <div *ngIf="!isLoadingUsers && !usersError && filteredUsers.length === 0" class="empty-container">
+              <mat-icon>person_off</mat-icon>
+              <p>No users found</p>
+            </div>
+            
+            <table mat-table [dataSource]="filteredUsers" class="mat-elevation-z2" *ngIf="!isLoadingUsers && !usersError && filteredUsers.length > 0">
+              <!-- ID Column -->
+              <ng-container matColumnDef="id">
+                <th mat-header-cell *matHeaderCellDef>ID</th>
+                <td mat-cell *matCellDef="let user">{{ user.id }}</td>
+              </ng-container>
+              
+              <!-- Name Column -->
+              <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef>Name</th>
+                <td mat-cell *matCellDef="let user">{{ user.name }}</td>
+              </ng-container>
+              
+              <!-- Email Column -->
+              <ng-container matColumnDef="email">
+                <th mat-header-cell *matHeaderCellDef>Email</th>
+                <td mat-cell *matCellDef="let user">{{ user.email }}</td>
+              </ng-container>
+              
+              <!-- Username Column -->
+              <ng-container matColumnDef="username">
+                <th mat-header-cell *matHeaderCellDef>Username</th>
+                <td mat-cell *matCellDef="let user">{{ user.username }}</td>
+              </ng-container>
+              
+              <!-- Role Column -->
+              <ng-container matColumnDef="role">
+                <th mat-header-cell *matHeaderCellDef>Role</th>
+                <td mat-cell *matCellDef="let user">
+                  <span class="role-badge" [ngClass]="getRoleClass(user.role)">
+                    {{ user.role }}
+                  </span>
+                </td>
+              </ng-container>
+              
+              <!-- Created Date Column -->
+              <ng-container matColumnDef="createdAt">
+                <th mat-header-cell *matHeaderCellDef>Created</th>
+                <td mat-cell *matCellDef="let user">{{ formatDate(user.createdAt) }}</td>
+              </ng-container>
+              
+              <!-- Rating Column -->
+              <ng-container matColumnDef="rating">
+                <th mat-header-cell *matHeaderCellDef>Rating</th>
+                <td mat-cell *matCellDef="let user">
+                  <div *ngIf="user.role === 'mover' && user.averageRating">
+                    {{ user.averageRating.toFixed(1) }} ({{ user.reviewCount }} reviews)
+                  </div>
+                  <div *ngIf="user.role !== 'mover' || !user.averageRating">-</div>
+                </td>
+              </ng-container>
+              
+              <!-- Actions Column -->
+              <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef>Actions</th>
+                <td mat-cell *matCellDef="let user">
+                  <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="User actions">
+                    <mat-icon>more_vert</mat-icon>
+                  </button>
+                  <mat-menu #menu="matMenu">
+                    <button mat-menu-item>
+                      <mat-icon>visibility</mat-icon>
+                      <span>View Details</span>
+                    </button>
+                    <button mat-menu-item>
+                      <mat-icon>edit</mat-icon>
+                      <span>Edit</span>
+                    </button>
+                    <button mat-menu-item>
+                      <mat-icon>block</mat-icon>
+                      <span>Disable Account</span>
+                    </button>
+                  </mat-menu>
+                </td>
+              </ng-container>
+              
+              <tr mat-header-row *matHeaderRowDef="['id', 'name', 'email', 'username', 'role', 'createdAt', 'rating', 'actions']"></tr>
+              <tr mat-row *matRowDef="let row; columns: ['id', 'name', 'email', 'username', 'role', 'createdAt', 'rating', 'actions'];"></tr>
+            </table>
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+    </mat-card-content>
+  </mat-card>
 </div>

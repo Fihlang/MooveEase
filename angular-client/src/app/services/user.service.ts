@@ -1,9 +1,8 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
-import { User, UserRole } from '../models/user.model';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { User, UserRole } from '../models/user.model';
 
 @Injectable({
   providedIn: 'root'
@@ -13,63 +12,28 @@ export class UserService {
   
   constructor(private http: HttpClient) { }
   
-  // Get all users (Admin only)
+  // Get all users (admin only)
   getAllUsers(): Observable<User[]> {
-    return this.http.get<User[]>(this.apiUrl)
-      .pipe(
-        catchError(error => {
-          return throwError(() => new Error(error.error?.message || 'Failed to load users'));
-        })
-      );
+    return this.http.get<User[]>(this.apiUrl);
+  }
+  
+  // Get user details by ID
+  getUser(id: number): Observable<User> {
+    return this.http.get<User>(`${this.apiUrl}/${id}`);
   }
   
   // Get users by role
   getUsersByRole(role: UserRole): Observable<User[]> {
-    return this.http.get<User[]>(`${this.apiUrl}/role/${role}`)
-      .pipe(
-        catchError(error => {
-          return throwError(() => new Error(error.error?.message || `Failed to load ${role} users`));
-        })
-      );
+    return this.http.get<User[]>(`${this.apiUrl}/role/${role}`);
   }
   
-  // Get user by ID
-  getUser(id: number): Observable<User> {
-    return this.http.get<User>(`${this.apiUrl}/${id}`)
-      .pipe(
-        catchError(error => {
-          return throwError(() => new Error(error.error?.message || 'Failed to load user details'));
-        })
-      );
+  // Get mover ratings
+  getMoverRatings(moverId: number): Observable<{ averageRating: number, reviewCount: number }> {
+    return this.http.get<{ averageRating: number, reviewCount: number }>(`${this.apiUrl}/${moverId}/ratings`);
   }
   
-  // Update user data
+  // Update user details
   updateUser(id: number, userData: Partial<User>): Observable<User> {
-    return this.http.patch<User>(`${this.apiUrl}/${id}`, userData)
-      .pipe(
-        catchError(error => {
-          return throwError(() => new Error(error.error?.message || 'Failed to update user data'));
-        })
-      );
-  }
-  
-  // Update user role (Admin only)
-  updateUserRole(id: number, role: UserRole): Observable<User> {
-    return this.http.patch<User>(`${this.apiUrl}/${id}/role`, { role })
-      .pipe(
-        catchError(error => {
-          return throwError(() => new Error(error.error?.message || 'Failed to update user role'));
-        })
-      );
-  }
-  
-  // Get movers with highest ratings
-  getTopMovers(limit: number = 5): Observable<User[]> {
-    return this.http.get<User[]>(`${this.apiUrl}/movers/top?limit=${limit}`)
-      .pipe(
-        catchError(error => {
-          return throwError(() => new Error(error.error?.message || 'Failed to load top movers'));
-        })
-      );
+    return this.http.patch<User>(`${this.apiUrl}/${id}`, userData);
   }
 }

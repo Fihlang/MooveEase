@@ -1,131 +1,79 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
-import { Order } from '../models/order.model';
-import { Review } from '../models/review.model';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { BookingRequest, Order, OrderSummary, TrackingUpdate } from '../models/order.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class OrderService {
-  private apiUrl = environment.apiUrl;
+  private apiUrl = `${environment.apiUrl}/orders`;
   
   constructor(private http: HttpClient) { }
   
-  // Get all orders (Admin only)
+  // Get all orders (admin only)
   getAllOrders(): Observable<Order[]> {
-    return this.http.get<Order[]>(`${this.apiUrl}/orders`)
-      .pipe(
-        catchError(error => {
-          return throwError(() => new Error(error.error?.message || 'Failed to load orders'));
-        })
-      );
+    return this.http.get<Order[]>(this.apiUrl);
   }
   
-  // Get user's orders (both customer and mover based on auth)
-  getUserOrders(): Observable<Order[]> {
-    return this.http.get<Order[]>(`${this.apiUrl}/orders/my-orders`)
-      .pipe(
-        catchError(error => {
-          return throwError(() => new Error(error.error?.message || 'Failed to load your orders'));
-        })
-      );
+  // Get order summary statistics (admin only)
+  getOrderSummary(): Observable<OrderSummary> {
+    return this.http.get<OrderSummary>(`${this.apiUrl}/summary`);
   }
   
-  // Get mover orders (for mover dashboard)
-  getMoverOrders(): Observable<Order[]> {
-    return this.http.get<Order[]>(`${this.apiUrl}/orders/mover-orders`)
-      .pipe(
-        catchError(error => {
-          return throwError(() => new Error(error.error?.message || 'Failed to load your mover orders'));
-        })
-      );
-  }
-  
-  // Get available orders (for movers)
-  getAvailableOrders(): Observable<Order[]> {
-    return this.http.get<Order[]>(`${this.apiUrl}/orders/available`)
-      .pipe(
-        catchError(error => {
-          return throwError(() => new Error(error.error?.message || 'Failed to load available orders'));
-        })
-      );
-  }
-  
-  // Get a specific order by ID
+  // Get single order by ID
   getOrder(id: number): Observable<Order> {
-    return this.http.get<Order>(`${this.apiUrl}/orders/${id}`)
-      .pipe(
-        catchError(error => {
-          return throwError(() => new Error(error.error?.message || 'Failed to load order details'));
-        })
-      );
+    return this.http.get<Order>(`${this.apiUrl}/${id}`);
   }
   
-  // Create a new order
-  createOrder(orderData: any): Observable<Order> {
-    return this.http.post<Order>(`${this.apiUrl}/orders`, orderData)
-      .pipe(
-        catchError(error => {
-          return throwError(() => new Error(error.error?.message || 'Failed to create order'));
-        })
-      );
+  // Get orders for current customer
+  getCustomerOrders(): Observable<Order[]> {
+    return this.http.get<Order[]>(`${this.apiUrl}/customer`);
+  }
+  
+  // Get orders for current mover
+  getMoverOrders(): Observable<Order[]> {
+    return this.http.get<Order[]>(`${this.apiUrl}/mover`);
+  }
+  
+  // Get available orders for movers to accept
+  getAvailableOrders(): Observable<Order[]> {
+    return this.http.get<Order[]>(`${this.apiUrl}/available`);
+  }
+  
+  // Create a new order (booking)
+  createOrder(orderData: BookingRequest): Observable<Order> {
+    return this.http.post<Order>(this.apiUrl, orderData);
   }
   
   // Update order status
-  updateOrderStatus(orderId: number, status: string): Observable<Order> {
-    return this.http.patch<Order>(`${this.apiUrl}/orders/${orderId}/status`, { status })
-      .pipe(
-        catchError(error => {
-          return throwError(() => new Error(error.error?.message || 'Failed to update order status'));
-        })
-      );
+  updateOrderStatus(id: number, status: string): Observable<Order> {
+    return this.http.patch<Order>(`${this.apiUrl}/${id}/status`, { status });
   }
   
-  // Assign order to mover
-  assignOrder(orderId: number): Observable<Order> {
-    return this.http.post<Order>(`${this.apiUrl}/orders/${orderId}/assign`, {})
-      .pipe(
-        catchError(error => {
-          return throwError(() => new Error(error.error?.message || 'Failed to assign order'));
-        })
-      );
+  // Assign mover to order
+  assignMover(id: number, moverId: number): Observable<Order> {
+    return this.http.patch<Order>(`${this.apiUrl}/${id}/assign`, { moverId });
   }
   
-  // Cancel order
-  cancelOrder(orderId: number): Observable<Order> {
-    return this.updateOrderStatus(orderId, 'cancelled');
+  // Update order tracking
+  updateTracking(trackingData: TrackingUpdate): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/${trackingData.orderId}/tracking`, trackingData);
   }
   
-  // Get reviews for an order
-  getOrderReviews(orderId: number): Observable<Review[]> {
-    return this.http.get<Review[]>(`${this.apiUrl}/orders/${orderId}/reviews`)
-      .pipe(
-        catchError(error => {
-          return throwError(() => new Error(error.error?.message || 'Failed to load reviews'));
-        })
-      );
+  // Get tracking history for an order
+  getOrderTracking(orderId: number): Observable<TrackingUpdate[]> {
+    return this.http.get<TrackingUpdate[]>(`${this.apiUrl}/${orderId}/tracking`);
   }
   
-  // Create a review
-  createReview(reviewData: any): Observable<Review> {
-    return this.http.post<Review>(`${this.apiUrl}/reviews`, reviewData)
-      .pipe(
-        catchError(error => {
-          return throwError(() => new Error(error.error?.message || 'Failed to submit review'));
-        })
-      );
+  // Cancel an order
+  cancelOrder(id: number, reason?: string): Observable<Order> {
+    return this.http.post<Order>(`${this.apiUrl}/${id}/cancel`, { reason });
   }
   
-  // Update tracking info
-  updateTracking(orderId: number, locationData: any): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/orders/${orderId}/tracking`, locationData)
-      .pipe(
-        catchError(error => {
-          return throwError(() => new Error(error.error?.message || 'Failed to update tracking'));
-        })
-      );
+  // Complete an order
+  completeOrder(id: number): Observable<Order> {
+    return this.http.post<Order>(`${this.apiUrl}/${id}/complete`, {});
   }
 }
