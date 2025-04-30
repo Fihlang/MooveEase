@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Title } from '@angular/platform-browser';
 import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
+import { Title } from '@angular/platform-browser';
 import { filter, map, mergeMap } from 'rxjs/operators';
 
 @Component({
@@ -10,15 +10,15 @@ import { filter, map, mergeMap } from 'rxjs/operators';
 })
 export class AppComponent implements OnInit {
   title = 'MoveEase';
-  
+
   constructor(
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private titleService: Title
   ) {}
-  
+
   ngOnInit() {
-    // Update page title based on route data
+    // Set dynamic page titles based on route data
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd),
       map(() => this.activatedRoute),
@@ -31,12 +31,8 @@ export class AppComponent implements OnInit {
       filter(route => route.outlet === 'primary'),
       mergeMap(route => route.data)
     ).subscribe(event => {
-      // Set page title if route data contains title information
-      if (event['title']) {
-        this.titleService.setTitle(`${event['title']} | ${this.title}`);
-      } else {
-        this.titleService.setTitle(this.title);
-      }
+      const pageTitle = event['title'] ? `${event['title']} | MoveEase` : 'MoveEase';
+      this.titleService.setTitle(pageTitle);
     });
   }
 }

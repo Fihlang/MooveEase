@@ -1,55 +1,27 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { AuthGuard } from './guards/auth.guard';
-import { RoleGuard } from './guards/role.guard';
-import { UserRole } from './models/user.model';
 
-// We'll import our components once they are created
-// import { HomeComponent } from './pages/home/home.component';
-// import { AuthComponent } from './pages/auth/auth.component';
-// import { BookingComponent } from './pages/booking/booking.component';
-// import { CustomerDashboardComponent } from './pages/customer-dashboard/customer-dashboard.component';
-// import { MoverDashboardComponent } from './pages/mover-dashboard/mover-dashboard.component';
-// import { AdminDashboardComponent } from './pages/admin-dashboard/admin-dashboard.component';
-// import { NotFoundComponent } from './pages/not-found/not-found.component';
+// Components
+import { AuthComponent } from './pages/auth/auth.component';
+
+// Guards (we'll implement these in a future step)
+// import { AuthGuard } from './guards/auth.guard';
+// import { RoleGuard } from './guards/role.guard';
+// import { UserRole } from './models/user.model';
 
 const routes: Routes = [
-  { 
-    path: '', 
-    // component: HomeComponent,
-    pathMatch: 'full' 
-  },
-  {
-    path: 'auth',
-    // component: AuthComponent
-  },
-  {
-    path: 'booking',
-    // component: BookingComponent,
-    canActivate: [AuthGuard]
-  },
-  {
-    path: 'customer-dashboard',
-    // component: CustomerDashboardComponent,
-    canActivate: [RoleGuard],
-    data: { role: UserRole.CUSTOMER }
-  },
-  {
-    path: 'mover-dashboard',
-    // component: MoverDashboardComponent,
-    canActivate: [RoleGuard],
-    data: { role: UserRole.MOVER }
-  },
-  {
-    path: 'admin-dashboard',
-    // component: AdminDashboardComponent,
-    canActivate: [RoleGuard],
-    data: { role: UserRole.ADMIN }
-  },
-  { 
-    path: '**', 
-    // component: NotFoundComponent 
-  }
+  // Auth routes
+  { path: 'auth/login', component: AuthComponent, data: { title: 'Sign In' } },
+  { path: 'auth/register', component: AuthComponent, data: { title: 'Sign Up' } },
+  
+  // Add more routes as components are created
+  // { path: '', component: HomeComponent, data: { title: 'Home' } },
+  // { path: 'customer-dashboard', component: CustomerDashboardComponent, canActivate: [AuthGuard, RoleGuard], data: { title: 'Customer Dashboard', roles: [UserRole.CUSTOMER] } },
+  // { path: 'mover-dashboard', component: MoverDashboardComponent, canActivate: [AuthGuard, RoleGuard], data: { title: 'Mover Dashboard', roles: [UserRole.MOVER] } },
+  // { path: 'admin-dashboard', component: AdminDashboardComponent, canActivate: [AuthGuard, RoleGuard], data: { title: 'Admin Dashboard', roles: [UserRole.ADMIN] } },
+  
+  // Redirect to home if route doesn't exist
+  { path: '**', redirectTo: '' }
 ];
 
 @NgModule({

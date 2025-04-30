@@ -1,220 +1,236 @@
 <div class="auth-container">
-  <div class="auth-content">
-    <div class="auth-card">
-      <div class="auth-header">
-        <h1 class="auth-title">{{ isLoginMode ? 'Welcome back' : 'Create your account' }}</h1>
-        <p class="auth-subtitle">{{ isLoginMode ? 'Sign in to access your account' : 'Join MoveEase to start moving furniture with ease' }}</p>
-      </div>
-      
-      <!-- Login Form -->
-      <form *ngIf="isLoginMode" [formGroup]="loginForm" (ngSubmit)="onLoginSubmit()" class="auth-form">
-        <div class="form-group">
-          <label for="login-username">Username</label>
-          <input 
-            type="text" 
-            id="login-username" 
-            formControlName="username" 
-            class="form-control" 
-            [class.is-invalid]="loginForm.get('username')?.invalid && loginForm.get('username')?.touched"
-            placeholder="Enter your username"
-          >
-          <div class="invalid-feedback" *ngIf="loginForm.get('username')?.invalid && loginForm.get('username')?.touched">
-            Username is required
-          </div>
+  <div class="flex min-h-screen">
+    <!-- Left side - Form -->
+    <div class="w-full lg:w-1/2 p-8 flex items-center justify-center">
+      <div class="w-full max-w-md">
+        <!-- Logo -->
+        <div class="text-center mb-8">
+          <a routerLink="/" class="text-primary-600 font-bold text-3xl flex items-center justify-center">
+            <span class="mr-2">
+              <i class="fas fa-truck text-primary-600"></i>
+            </span>
+            MoveEase
+          </a>
+          <p class="text-gray-600 mt-2">Moving furniture with ease</p>
         </div>
-        
-        <div class="form-group">
-          <label for="login-password">Password</label>
-          <input 
-            type="password" 
-            id="login-password" 
-            formControlName="password" 
-            class="form-control" 
-            [class.is-invalid]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
-            placeholder="Enter your password"
-          >
-          <div class="invalid-feedback" *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
-            Password must be at least 6 characters long
-          </div>
-        </div>
-        
-        <div class="form-actions">
-          <button type="submit" class="btn btn-primary btn-block" [disabled]="loginForm.invalid || isSubmitting">
-            {{ isSubmitting ? 'Signing in...' : 'Sign In' }}
-          </button>
-        </div>
-      </form>
-      
-      <!-- Register Form -->
-      <form *ngIf="!isLoginMode" [formGroup]="registerForm" (ngSubmit)="onRegisterSubmit()" class="auth-form">
-        <div class="form-row">
-          <div class="form-group">
-            <label for="register-username">Username</label>
-            <input 
-              type="text" 
-              id="register-username" 
-              formControlName="username" 
-              class="form-control" 
-              [class.is-invalid]="registerForm.get('username')?.invalid && registerForm.get('username')?.touched"
-              placeholder="Choose a username"
-            >
-            <div class="invalid-feedback" *ngIf="registerForm.get('username')?.invalid && registerForm.get('username')?.touched">
-              Username is required
+
+        <!-- Login Form -->
+        <div *ngIf="isLogin" class="auth-form">
+          <h2 class="text-2xl font-bold text-gray-800 mb-6">Sign In</h2>
+
+          <form [formGroup]="loginForm" (ngSubmit)="onLoginSubmit()" class="space-y-4">
+            <!-- Alert Error -->
+            <div *ngIf="error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+              <span class="block sm:inline">{{ error }}</span>
             </div>
-          </div>
+
+            <!-- Username -->
+            <div class="form-group">
+              <label for="login-username" class="block text-sm font-medium text-gray-700 mb-1">Username</label>
+              <input type="text" formControlName="username" id="login-username" 
+                class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary-600"
+                [ngClass]="{'border-red-500': submitted && lf['username'].errors}">
+              <div *ngIf="submitted && lf['username'].errors" class="text-red-500 text-sm mt-1">
+                <div *ngIf="lf['username'].errors['required']">Username is required</div>
+                <div *ngIf="lf['username'].errors['minlength']">Username must be at least 3 characters</div>
+              </div>
+            </div>
+
+            <!-- Password -->
+            <div class="form-group">
+              <label for="login-password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+              <input type="password" formControlName="password" id="login-password" 
+                class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary-600"
+                [ngClass]="{'border-red-500': submitted && lf['password'].errors}">
+              <div *ngIf="submitted && lf['password'].errors" class="text-red-500 text-sm mt-1">
+                <div *ngIf="lf['password'].errors['required']">Password is required</div>
+                <div *ngIf="lf['password'].errors['minlength']">Password must be at least 6 characters</div>
+              </div>
+            </div>
+
+            <!-- Remember Me & Forgot Password -->
+            <div class="flex items-center justify-between">
+              <div class="flex items-center">
+                <input id="remember-me" name="remember-me" type="checkbox" class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded">
+                <label for="remember-me" class="ml-2 block text-sm text-gray-700">Remember me</label>
+              </div>
+              <div class="text-sm">
+                <a href="#" class="font-medium text-primary-600 hover:text-primary-500">Forgot password?</a>
+              </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div>
+              <button type="submit" 
+                class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                [disabled]="loading">
+                <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+                Sign In
+              </button>
+            </div>
+
+            <!-- Register Link -->
+            <div class="text-center mt-4">
+              <p class="text-sm text-gray-600">
+                Don't have an account?
+                <a (click)="toggleView()" class="font-medium text-primary-600 hover:text-primary-500 cursor-pointer">Sign Up</a>
+              </p>
+            </div>
+          </form>
+        </div>
+
+        <!-- Register Form -->
+        <div *ngIf="!isLogin" class="auth-form">
+          <h2 class="text-2xl font-bold text-gray-800 mb-6">Create Account</h2>
           
-          <div class="form-group">
-            <label for="register-email">Email</label>
-            <input 
-              type="email" 
-              id="register-email" 
-              formControlName="email" 
-              class="form-control" 
-              [class.is-invalid]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched"
-              placeholder="Enter your email"
-            >
-            <div class="invalid-feedback" *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched">
-              Please enter a valid email address
+          <form [formGroup]="registerForm" (ngSubmit)="onRegisterSubmit()" class="space-y-4">
+            <!-- Alert Error -->
+            <div *ngIf="error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+              <span class="block sm:inline">{{ error }}</span>
             </div>
-          </div>
-        </div>
-        
-        <div class="form-group">
-          <label for="register-fullname">Full Name</label>
-          <input 
-            type="text" 
-            id="register-fullname" 
-            formControlName="fullName" 
-            class="form-control" 
-            [class.is-invalid]="registerForm.get('fullName')?.invalid && registerForm.get('fullName')?.touched"
-            placeholder="Enter your full name"
-          >
-          <div class="invalid-feedback" *ngIf="registerForm.get('fullName')?.invalid && registerForm.get('fullName')?.touched">
-            Full name is required
-          </div>
-        </div>
-        
-        <div class="form-row">
-          <div class="form-group">
-            <label for="register-password">Password</label>
-            <input 
-              type="password" 
-              id="register-password" 
-              formControlName="password" 
-              class="form-control" 
-              [class.is-invalid]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched"
-              placeholder="Create a password"
-            >
-            <div class="invalid-feedback" *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched">
-              Password must be at least 6 characters long
+
+            <!-- Full Name -->
+            <div class="form-group">
+              <label for="register-name" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+              <input type="text" formControlName="name" id="register-name" 
+                class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary-600"
+                [ngClass]="{'border-red-500': submitted && rf['name'].errors}">
+              <div *ngIf="submitted && rf['name'].errors" class="text-red-500 text-sm mt-1">
+                <div *ngIf="rf['name'].errors['required']">Full name is required</div>
+              </div>
             </div>
-          </div>
-          
-          <div class="form-group">
-            <label for="register-confirm-password">Confirm Password</label>
-            <input 
-              type="password" 
-              id="register-confirm-password" 
-              formControlName="confirmPassword" 
-              class="form-control" 
-              [class.is-invalid]="registerForm.get('confirmPassword')?.invalid && registerForm.get('confirmPassword')?.touched"
-              placeholder="Confirm your password"
-            >
-            <div class="invalid-feedback" *ngIf="registerForm.get('confirmPassword')?.errors?.['passwordMismatch']">
-              Passwords do not match
+
+            <!-- Email -->
+            <div class="form-group">
+              <label for="register-email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+              <input type="email" formControlName="email" id="register-email" 
+                class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary-600"
+                [ngClass]="{'border-red-500': submitted && rf['email'].errors}">
+              <div *ngIf="submitted && rf['email'].errors" class="text-red-500 text-sm mt-1">
+                <div *ngIf="rf['email'].errors['required']">Email is required</div>
+                <div *ngIf="rf['email'].errors['email']">Please enter a valid email</div>
+              </div>
             </div>
-          </div>
+
+            <!-- Username -->
+            <div class="form-group">
+              <label for="register-username" class="block text-sm font-medium text-gray-700 mb-1">Username</label>
+              <input type="text" formControlName="username" id="register-username" 
+                class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary-600"
+                [ngClass]="{'border-red-500': submitted && rf['username'].errors}">
+              <div *ngIf="submitted && rf['username'].errors" class="text-red-500 text-sm mt-1">
+                <div *ngIf="rf['username'].errors['required']">Username is required</div>
+                <div *ngIf="rf['username'].errors['minlength']">Username must be at least 3 characters</div>
+              </div>
+            </div>
+
+            <!-- Password -->
+            <div class="form-group">
+              <label for="register-password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+              <input type="password" formControlName="password" id="register-password" 
+                class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary-600"
+                [ngClass]="{'border-red-500': submitted && rf['password'].errors}">
+              <div *ngIf="submitted && rf['password'].errors" class="text-red-500 text-sm mt-1">
+                <div *ngIf="rf['password'].errors['required']">Password is required</div>
+                <div *ngIf="rf['password'].errors['minlength']">Password must be at least 6 characters</div>
+              </div>
+            </div>
+
+            <!-- Confirm Password -->
+            <div class="form-group">
+              <label for="register-confirm-password" class="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
+              <input type="password" formControlName="confirmPassword" id="register-confirm-password" 
+                class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary-600"
+                [ngClass]="{'border-red-500': submitted && rf['confirmPassword'].errors}">
+              <div *ngIf="submitted && rf['confirmPassword'].errors" class="text-red-500 text-sm mt-1">
+                <div *ngIf="rf['confirmPassword'].errors['required']">Confirm Password is required</div>
+                <div *ngIf="rf['confirmPassword'].errors['mustMatch']">Passwords must match</div>
+              </div>
+            </div>
+
+            <!-- Role Selection -->
+            <div class="form-group">
+              <label for="register-role" class="block text-sm font-medium text-gray-700 mb-1">I am a</label>
+              <select formControlName="role" id="register-role" 
+                class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary-600">
+                <option [value]="UserRole.CUSTOMER">Customer looking to move furniture</option>
+                <option [value]="UserRole.MOVER">Professional Mover</option>
+              </select>
+            </div>
+
+            <!-- Terms -->
+            <div class="flex items-center">
+              <input id="terms" name="terms" type="checkbox" class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded">
+              <label for="terms" class="ml-2 block text-sm text-gray-700">
+                I agree to the <a href="#" class="text-primary-600 hover:text-primary-500">Terms and Conditions</a>
+              </label>
+            </div>
+
+            <!-- Submit Button -->
+            <div>
+              <button type="submit" 
+                class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                [disabled]="loading">
+                <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+                Create Account
+              </button>
+            </div>
+
+            <!-- Login Link -->
+            <div class="text-center mt-4">
+              <p class="text-sm text-gray-600">
+                Already have an account?
+                <a (click)="toggleView()" class="font-medium text-primary-600 hover:text-primary-500 cursor-pointer">Sign In</a>
+              </p>
+            </div>
+          </form>
         </div>
-        
-        <div class="form-group">
-          <label for="register-role">I am a:</label>
-          <select 
-            id="register-role" 
-            formControlName="role" 
-            class="form-control" 
-            [class.is-invalid]="registerForm.get('role')?.invalid && registerForm.get('role')?.touched"
-          >
-            <option [value]="UserRole.CUSTOMER">Customer looking to move furniture</option>
-            <option [value]="UserRole.MOVER">Professional Mover</option>
-          </select>
-        </div>
-        
-        <div class="form-group">
-          <label for="register-phone">Phone Number (Optional)</label>
-          <input 
-            type="tel" 
-            id="register-phone" 
-            formControlName="phone" 
-            class="form-control" 
-            placeholder="Enter your phone number"
-          >
-        </div>
-        
-        <div class="form-group">
-          <label for="register-address">Address (Optional)</label>
-          <input 
-            type="text" 
-            id="register-address" 
-            formControlName="address" 
-            class="form-control" 
-            placeholder="Enter your address"
-          >
-        </div>
-        
-        <div class="form-actions">
-          <button type="submit" class="btn btn-primary btn-block" [disabled]="registerForm.invalid || isSubmitting">
-            {{ isSubmitting ? 'Creating account...' : 'Create Account' }}
-          </button>
-        </div>
-      </form>
-      
-      <!-- Error Message -->
-      <div class="error-message" *ngIf="errorMessage">
-        {{ errorMessage }}
-      </div>
-      
-      <!-- Toggle between login and register -->
-      <div class="auth-toggle">
-        <p *ngIf="isLoginMode">
-          Don't have an account? <a href="javascript:void(0)" (click)="toggleMode()">Register now</a>
-        </p>
-        <p *ngIf="!isLoginMode">
-          Already have an account? <a href="javascript:void(0)" (click)="toggleMode()">Sign in</a>
-        </p>
       </div>
     </div>
-  </div>
-  
-  <!-- Auth Hero Section -->
-  <div class="auth-hero">
-    <div class="hero-content">
-      <h2 class="hero-title">Furniture Moving <span class="text-gradient">Made Simple</span></h2>
-      <div class="hero-features">
-        <div class="feature">
-          <div class="feature-icon">
-            <div class="icon-placeholder"></div>
-          </div>
-          <div class="feature-text">
-            <h3>Easy Booking</h3>
-            <p>Book furniture movers in just a few clicks</p>
-          </div>
-        </div>
-        <div class="feature">
-          <div class="feature-icon">
-            <div class="icon-placeholder"></div>
-          </div>
-          <div class="feature-text">
-            <h3>Real-time Tracking</h3>
-            <p>Know exactly where your furniture is at all times</p>
-          </div>
-        </div>
-        <div class="feature">
-          <div class="feature-icon">
-            <div class="icon-placeholder"></div>
-          </div>
-          <div class="feature-text">
-            <h3>Secure Payments</h3>
-            <p>Pay safely and securely through our platform</p>
+
+    <!-- Right side - Hero/Info -->
+    <div class="hidden lg:block lg:w-1/2 bg-primary-600">
+      <div class="h-full flex flex-col justify-center p-12 text-white">
+        <div class="max-w-md mx-auto">
+          <h2 class="text-4xl font-bold mb-6">Furniture Moving Made Simple</h2>
+          <p class="text-xl mb-8">MoveEase connects you with professional movers to handle your furniture transport needs quickly and efficiently.</p>
+          
+          <div class="space-y-6">
+            <div class="flex items-start">
+              <div class="flex-shrink-0">
+                <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <div class="ml-3">
+                <h3 class="text-lg font-medium">Real-time Tracking</h3>
+                <p class="mt-1">Track your furniture delivery in real-time on a live map.</p>
+              </div>
+            </div>
+            
+            <div class="flex items-start">
+              <div class="flex-shrink-0">
+                <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <div class="ml-3">
+                <h3 class="text-lg font-medium">Verified Professionals</h3>
+                <p class="mt-1">All movers are vetted and reviewed by our community.</p>
+              </div>
+            </div>
+            
+            <div class="flex items-start">
+              <div class="flex-shrink-0">
+                <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <div class="ml-3">
+                <h3 class="text-lg font-medium">Secure Payments</h3>
+                <p class="mt-1">Pay securely through our platform with multiple payment options.</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
