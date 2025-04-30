@@ -1,104 +1,195 @@
-<!-- Hero Section -->
-<section class="hero-section">
-  <div class="hero-content">
-    <h1 class="hero-title">Furniture Moving Made <span class="text-gradient">Simple</span></h1>
-    <p class="hero-subtitle">Connect with professional movers to transport your furniture safely and efficiently</p>
-    <div class="hero-buttons">
-      <button class="btn btn-primary btn-lg" (click)="navigateToBooking()">Book a Move</button>
-      <button class="btn btn-outline btn-lg" (click)="navigateToDashboard()">
-        <ng-container *ngIf="isLoggedIn">Go to Dashboard</ng-container>
-        <ng-container *ngIf="!isLoggedIn">Learn More</ng-container>
+<div class="home-container">
+  <!-- Hero Section -->
+  <section class="hero-section bg-gradient-to-r from-primary-700 to-primary-800 text-white">
+    <div class="container mx-auto px-4 py-20 sm:py-24 lg:py-32 flex flex-col lg:flex-row items-center">
+      <div class="lg:w-1/2 lg:pr-12 mb-10 lg:mb-0">
+        <h1 class="text-4xl sm:text-5xl font-bold leading-tight mb-6">
+          Moving Furniture? <br>
+          <span class="bg-clip-text text-transparent bg-gradient-to-r from-yellow-200 to-yellow-400">
+            We've Got You Covered
+          </span>
+        </h1>
+        <p class="text-xl mb-8">
+          MoveEase connects you with professional movers who can help you transport your furniture safely and efficiently.
+        </p>
+        <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+          <button (click)="navigateToBooking()" 
+                  class="px-8 py-3 bg-white text-primary-700 font-medium rounded-md hover:bg-gray-100 transition duration-300 shadow-lg">
+            Book Now
+          </button>
+          <button (click)="navigateToDashboard()" 
+                  class="px-8 py-3 bg-transparent border-2 border-white text-white font-medium rounded-md hover:bg-white hover:bg-opacity-10 transition duration-300">
+            Go to Dashboard
+          </button>
+        </div>
+      </div>
+      <div class="lg:w-1/2">
+        <div class="bg-white rounded-lg shadow-2xl p-6 transform rotate-1">
+          <img src="assets/images/furniture-moving.jpg" alt="Furniture Moving" class="rounded w-full h-auto">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works Section -->
+  <section class="how-it-works bg-gray-100 py-20">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl sm:text-4xl font-bold text-center mb-16 text-gray-800">How MoveEase Works</h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- Step 1 -->
+        <div class="bg-white rounded-lg shadow-md p-6 text-center">
+          <div class="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span class="text-primary-600 text-2xl font-bold">1</span>
+          </div>
+          <h3 class="text-xl font-semibold mb-3 text-gray-800">Book Your Move</h3>
+          <p class="text-gray-600">Enter your pickup and delivery details, furniture information, and preferred date.</p>
+        </div>
+        
+        <!-- Step 2 -->
+        <div class="bg-white rounded-lg shadow-md p-6 text-center">
+          <div class="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span class="text-primary-600 text-2xl font-bold">2</span>
+          </div>
+          <h3 class="text-xl font-semibold mb-3 text-gray-800">Get Matched</h3>
+          <p class="text-gray-600">Our system matches you with the best movers for your specific furniture moving needs.</p>
+        </div>
+        
+        <!-- Step 3 -->
+        <div class="bg-white rounded-lg shadow-md p-6 text-center">
+          <div class="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span class="text-primary-600 text-2xl font-bold">3</span>
+          </div>
+          <h3 class="text-xl font-semibold mb-3 text-gray-800">Track & Receive</h3>
+          <p class="text-gray-600">Track your furniture in real-time and rate your experience after successful delivery.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Services Section -->
+  <section class="services py-20">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl sm:text-4xl font-bold text-center mb-16 text-gray-800">Our Services</h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Service 1 -->
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+          <div class="h-48 bg-gray-300">
+            <img src="assets/images/single-item.jpg" alt="Single Item Moving" class="w-full h-full object-cover">
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-semibold mb-2 text-gray-800">Single Item Moving</h3>
+            <p class="text-gray-600 mb-4">Need to move just one piece of furniture? Our movers can help with that.</p>
+            <p class="text-primary-600 font-semibold">Starting at $49</p>
+          </div>
+        </div>
+        
+        <!-- Service 2 -->
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+          <div class="h-48 bg-gray-300">
+            <img src="assets/images/multiple-items.jpg" alt="Multiple Items Moving" class="w-full h-full object-cover">
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-semibold mb-2 text-gray-800">Multiple Items Moving</h3>
+            <p class="text-gray-600 mb-4">Moving several pieces of furniture? Our movers will handle it efficiently.</p>
+            <p class="text-primary-600 font-semibold">Starting at $99</p>
+          </div>
+        </div>
+        
+        <!-- Service 3 -->
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+          <div class="h-48 bg-gray-300">
+            <img src="assets/images/specialty-items.jpg" alt="Specialty Items Moving" class="w-full h-full object-cover">
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-semibold mb-2 text-gray-800">Specialty Items Moving</h3>
+            <p class="text-gray-600 mb-4">Have delicate or valuable furniture? Our specialists ensure safe transport.</p>
+            <p class="text-primary-600 font-semibold">Starting at $149</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials Section -->
+  <section class="testimonials bg-gray-100 py-20">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl sm:text-4xl font-bold text-center mb-16 text-gray-800">What Our Customers Say</h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Testimonial 1 -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <div class="flex items-center mb-4">
+            <div class="w-12 h-12 bg-primary-600 rounded-full flex items-center justify-center text-white font-bold mr-4">
+              JD
+            </div>
+            <div>
+              <h4 class="font-semibold text-gray-800">John Doe</h4>
+              <div class="flex text-yellow-400">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+              </div>
+            </div>
+          </div>
+          <p class="text-gray-600">"MoveEase made moving my antique dining table a breeze. The movers were professional and handled everything with care."</p>
+        </div>
+        
+        <!-- Testimonial 2 -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <div class="flex items-center mb-4">
+            <div class="w-12 h-12 bg-primary-600 rounded-full flex items-center justify-center text-white font-bold mr-4">
+              JS
+            </div>
+            <div>
+              <h4 class="font-semibold text-gray-800">Jane Smith</h4>
+              <div class="flex text-yellow-400">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+              </div>
+            </div>
+          </div>
+          <p class="text-gray-600">"I was able to track my furniture in real-time and the movers arrived exactly when they said they would. Great service!"</p>
+        </div>
+        
+        <!-- Testimonial 3 -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <div class="flex items-center mb-4">
+            <div class="w-12 h-12 bg-primary-600 rounded-full flex items-center justify-center text-white font-bold mr-4">
+              RJ
+            </div>
+            <div>
+              <h4 class="font-semibold text-gray-800">Robert Johnson</h4>
+              <div class="flex text-yellow-400">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+              </div>
+            </div>
+          </div>
+          <p class="text-gray-600">"The booking process was so simple, and the price was very reasonable. Will definitely use MoveEase again!"</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="cta-section bg-primary-600 text-white py-16">
+    <div class="container mx-auto px-4 text-center">
+      <h2 class="text-3xl sm:text-4xl font-bold mb-6">Ready to Move Your Furniture?</h2>
+      <p class="text-xl mb-8 max-w-2xl mx-auto">Join thousands of satisfied customers who trust MoveEase for their furniture moving needs.</p>
+      <button (click)="navigateToBooking()" 
+              class="px-8 py-3 bg-white text-primary-700 font-medium rounded-md hover:bg-gray-100 transition duration-300 shadow-lg text-lg">
+        Book Your Move Now
       </button>
     </div>
-  </div>
-  <div class="hero-image">
-    <!-- Hero image placeholder -->
-    <div class="image-placeholder">
-      <img src="assets/images/hero-furniture-moving.svg" alt="Furniture Moving Illustration">
-    </div>
-  </div>
-</section>
-
-<!-- Services Section -->
-<section class="services-section">
-  <div class="section-header">
-    <h2 class="section-title">Our <span class="text-gradient">Services</span></h2>
-    <p class="section-subtitle">Choose the perfect moving service for your needs</p>
-  </div>
-  
-  <div class="services-grid">
-    <div class="service-card" *ngFor="let service of services">
-      <div class="service-image">
-        <div class="image-placeholder">
-          <!-- Placeholder for service image -->
-          <div class="service-icon"></div>
-        </div>
-      </div>
-      <h3 class="service-title">{{ service.title }}</h3>
-      <p class="service-description">{{ service.description }}</p>
-      <p class="service-price">{{ service.price }}</p>
-      <button class="btn btn-primary" (click)="navigateToBooking()">Book Now</button>
-    </div>
-  </div>
-</section>
-
-<!-- How It Works Section -->
-<section class="how-it-works-section">
-  <div class="section-header">
-    <h2 class="section-title">How It <span class="text-gradient">Works</span></h2>
-    <p class="section-subtitle">Moving furniture has never been this easy</p>
-  </div>
-  
-  <div class="steps-container">
-    <div class="step" *ngFor="let step of steps; let i = index">
-      <div class="step-number">{{ i + 1 }}</div>
-      <div class="step-icon">
-        <!-- Icon placeholder -->
-        <div class="icon-placeholder"></div>
-      </div>
-      <h3 class="step-title">{{ step.title }}</h3>
-      <p class="step-description">{{ step.description }}</p>
-    </div>
-  </div>
-</section>
-
-<!-- Testimonials Section -->
-<section class="testimonials-section">
-  <div class="section-header">
-    <h2 class="section-title">What Our Customers <span class="text-gradient">Say</span></h2>
-    <p class="section-subtitle">Join thousands of satisfied customers</p>
-  </div>
-  
-  <div class="testimonials-container">
-    <div class="testimonial-card" *ngFor="let testimonial of testimonials">
-      <div class="testimonial-rating">
-        <div class="stars">
-          <span class="star" *ngFor="let star of [1, 2, 3, 4, 5]">
-            <span class="star-filled" *ngIf="star <= testimonial.rating">★</span>
-            <span class="star-empty" *ngIf="star > testimonial.rating">☆</span>
-          </span>
-        </div>
-      </div>
-      <p class="testimonial-text">"{{ testimonial.comment }}"</p>
-      <div class="testimonial-author">
-        <div class="author-avatar">
-          <!-- Avatar placeholder with initials -->
-          <div class="avatar-placeholder">{{ testimonial.name.charAt(0) }}</div>
-        </div>
-        <div class="author-name">{{ testimonial.name }}</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- CTA Section -->
-<section class="cta-section">
-  <div class="cta-content">
-    <h2 class="cta-title">Ready to Move Your <span class="text-gradient">Furniture?</span></h2>
-    <p class="cta-subtitle">Join MoveEase today and experience hassle-free furniture moving</p>
-    <div class="cta-buttons">
-      <button class="btn btn-primary btn-lg" (click)="navigateToBooking()">Book a Move</button>
-      <button class="btn btn-light btn-lg" (click)="navigateToAuth()">Sign Up Now</button>
-    </div>
-  </div>
-</section>
+  </section>
+</div>

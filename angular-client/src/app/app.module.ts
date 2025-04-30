@@ -8,6 +8,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AuthComponent } from './pages/auth/auth.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
+import { HomeComponent } from './pages/home/home.component';
 
 // Interceptors
 import { AuthInterceptor } from './interceptors/auth.interceptor';
@@ -16,7 +17,8 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
   declarations: [
     AppComponent,
     AuthComponent,
-    NavbarComponent
+    NavbarComponent,
+    HomeComponent
   ],
   imports: [
     BrowserModule,
