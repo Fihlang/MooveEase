@@ -13,10 +13,21 @@ export interface Order {
   price?: number;
   paymentStatus: PaymentStatus;
   createdAt: Date;
+  updatedAt: Date;
 }
 
 export type OrderStatus = 'pending' | 'accepted' | 'in_progress' | 'completed' | 'cancelled';
 export type PaymentStatus = 'pending' | 'completed';
+
+export interface OrderSummary {
+  totalOrders: number;
+  pendingOrders: number;
+  acceptedOrders: number;
+  activeOrders: number;
+  completedOrders: number;
+  cancelledOrders: number;
+  totalRevenue: number;
+}
 
 export interface BookingRequest {
   pickupAddress: string;

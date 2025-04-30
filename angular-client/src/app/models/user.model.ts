@@ -1,22 +1,20 @@
+export interface User {
+  id: number;
+  name: string;
+  email: string;
+  username: string;
+  password?: string; // Only included in registration, not in responses
+  role: UserRole;
+  createdAt: Date;
+  updatedAt: Date;
+  averageRating?: number;
+  reviewCount?: number;
+}
+
 export enum UserRole {
   CUSTOMER = 'customer',
   MOVER = 'mover',
   ADMIN = 'admin'
-}
-
-export interface User {
-  id: number;
-  username: string;
-  email: string;
-  fullName: string;
-  role: UserRole;
-  phone?: string;
-  address?: string;
-  bio?: string;
-  isActive: boolean;
-  rating?: number;
-  ratingCount?: number;
-  createdAt: Date;
 }
 
 export interface LoginRequest {
@@ -25,13 +23,9 @@ export interface LoginRequest {
 }
 
 export interface RegisterRequest {
-  username: string;
+  name: string;
   email: string;
+  username: string;
   password: string;
-  confirmPassword?: string;
-  fullName: string;
-  role: UserRole;
-  phone?: string;
-  address?: string;
-  bio?: string;
+  role?: UserRole;
 }

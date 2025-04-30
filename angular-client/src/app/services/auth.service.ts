@@ -1,90 +1,119 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
+import { Observable, BehaviorSubject, of, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
-import { User, LoginRequest, RegisterRequest } from '../models/user.model';
+import { User, UserRole } from '../models/user.model';
 import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private currentUserSubject: BehaviorSubject<User | null>;
-  public currentUser: Observable<User | null>;
-  
-  private apiUrl = environment.apiUrl;
+  private apiUrl = `${environment.apiUrl}/auth`;
+  private userSubject = new BehaviorSubject<User | null>(null);
+  public currentUser = this.userSubject.asObservable();
   
   constructor(private http: HttpClient) {
+    this.loadUserFromStorage();
+  }
+  
+  private loadUserFromStorage(): void {
     const storedUser = localStorage.getItem('currentUser');
-    this.currentUserSubject = new BehaviorSubject<User | null>(
-      storedUser ? JSON.parse(storedUser) : null
-    );
-    this.currentUser = this.currentUserSubject.asObservable();
-  }
-  
-  public get currentUserValue(): User | null {
-    return this.currentUserSubject.value;
-  }
-  
-  login(loginRequest: LoginRequest): Observable<User> {
-    return this.http.post<User>(`${this.apiUrl}/auth/login`, loginRequest)
-      .pipe(
-        tap(user => {
-          // Store user details and jwt token in local storage to keep user logged in
-          localStorage.setItem('currentUser', JSON.stringify(user));
-          this.currentUserSubject.next(user);
-          return user;
-        }),
-        catchError(error => {
-          return throwError(() => new Error(error.error?.message || 'Login failed'));
-        })
-      );
-  }
-  
-  register(registerRequest: RegisterRequest): Observable<User> {
-    return this.http.post<User>(`${this.apiUrl}/auth/register`, registerRequest)
-      .pipe(
-        tap(user => {
-          // Auto login after registration
-          localStorage.setItem('currentUser', JSON.stringify(user));
-          this.currentUserSubject.next(user);
-          return user;
-        }),
-        catchError(error => {
-          return throwError(() => new Error(error.error?.message || 'Registration failed'));
-        })
-      );
-  }
-  
-  logout(): Observable<boolean> {
-    // Call logout API
-    return this.http.post<any>(`${this.apiUrl}/auth/logout`, {}).pipe(
-      map(() => {
-        // Remove user from local storage and set current user to null
+    if (storedUser) {
+      try {
+        this.userSubject.next(JSON.parse(storedUser));
+      } catch (error) {
         localStorage.removeItem('currentUser');
-        this.currentUserSubject.next(null);
-        return true;
+      }
+    }
+  }
+  
+  public get userValue(): User | null {
+    return this.userSubject.value;
+  }
+  
+  register(name: string, email: string, username: string, password: string, role: UserRole = UserRole.CUSTOMER): Observable<User> {
+    return this.http.post<User>(`${this.apiUrl}/register`, {
+      name, 
+      email, 
+      username, 
+      password, 
+      role
+    }).pipe(
+      tap(user => {
+        if (user) {
+          localStorage.setItem('currentUser', JSON.stringify(user));
+          this.userSubject.next(user);
+        }
       }),
-      catchError(() => {
-        // Ensure user is logged out locally even if API call fails
-        localStorage.removeItem('currentUser');
-        this.currentUserSubject.next(null);
-        return of(true);
+      catchError(error => {
+        return throwError(() => new Error(error.error?.message || 'Registration failed. Please try again.'));
       })
     );
   }
   
-  isAuthenticated(): boolean {
-    return !!this.currentUserValue;
+  login(username: string, password: string): Observable<User> {
+    return this.http.post<User>(`${this.apiUrl}/login`, { username, password })
+      .pipe(
+        tap(user => {
+          if (user) {
+            localStorage.setItem('currentUser', JSON.stringify(user));
+            this.userSubject.next(user);
+          }
+        }),
+        catchError(error => {
+          return throwError(() => new Error(error.error?.message || 'Invalid username or password.'));
+        })
+      );
   }
   
-  hasRole(requiredRole: string | string[]): boolean {
-    const user = this.currentUserValue;
+  logout(): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/logout`, {})
+      .pipe(
+        tap(() => {
+          localStorage.removeItem('currentUser');
+          this.userSubject.next(null);
+        }),
+        catchError(error => {
+          // Still clear local storage and user subject on error
+          localStorage.removeItem('currentUser');
+          this.userSubject.next(null);
+          return throwError(() => new Error(error.error?.message || 'Logout failed.'));
+        })
+      );
+  }
+  
+  refreshUserData(): Observable<User> {
+    return this.http.get<User>(`${this.apiUrl}/user`)
+      .pipe(
+        tap(user => {
+          if (user) {
+            localStorage.setItem('currentUser', JSON.stringify(user));
+            this.userSubject.next(user);
+          }
+        }),
+        catchError(error => {
+          if (error.status === 401) {
+            localStorage.removeItem('currentUser');
+            this.userSubject.next(null);
+          }
+          return throwError(() => new Error(error.error?.message || 'Failed to get user data.'));
+        })
+      );
+  }
+  
+  isLoggedIn(): boolean {
+    return !!this.userValue;
+  }
+  
+  hasRole(requiredRole: UserRole | UserRole[]): boolean {
+    const user = this.userValue;
     if (!user) return false;
     
     if (Array.isArray(requiredRole)) {
       return requiredRole.includes(user.role);
     }
+    
     return user.role === requiredRole;
   }
 }

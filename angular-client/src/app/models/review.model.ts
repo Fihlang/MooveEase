@@ -8,7 +8,7 @@ export interface Review {
   createdAt: Date;
 }
 
-export interface ReviewRequest {
+export interface CreateReviewRequest {
   orderId: number;
   moverId: number;
   rating: number;
