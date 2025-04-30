@@ -1,170 +1,42 @@
-.navbar {
-  width: 100%;
-  background-color: #ffffff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  z-index: 1000;
-  position: sticky;
-  top: 0;
+// Custom navbar styles
+.text-primary-600 {
+  color: #4f46e5; // Indigo color
 }
 
-.navbar-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
+.text-primary-700 {
+  color: #4338ca; // Darker indigo
 }
 
-.navbar-brand {
-  text-decoration: none;
-  display: flex;
-  align-items: center;
+.bg-primary-600 {
+  background-color: #4f46e5;
 }
 
-.logo {
-  font-size: 1.8rem;
-  font-weight: 700;
-  background: linear-gradient(90deg, #4a6cf7 0%, #2e3ec9 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  letter-spacing: -0.5px;
+.bg-primary-700 {
+  background-color: #4338ca;
 }
 
-.desktop-nav {
-  display: flex;
-  align-items: center;
-  gap: 2rem;
+.bg-primary-50 {
+  background-color: #eef2ff; // Very light indigo
 }
 
-.nav-link {
-  color: #333;
-  text-decoration: none;
-  font-weight: 500;
-  transition: color 0.3s ease;
-  
-  &:hover {
-    color: #4a6cf7;
-  }
-  
-  &.active {
-    color: #4a6cf7;
-    font-weight: 600;
-  }
+.hover\:text-primary-600:hover {
+  color: #4f46e5;
 }
 
-.auth-btn {
-  padding: 0.5rem 1.5rem;
-  border-radius: 4px;
-  font-weight: 600;
-  text-decoration: none;
-  transition: all 0.3s ease;
-  
-  &.login {
-    border: 1px solid #4a6cf7;
-    color: #4a6cf7;
-    
-    &:hover {
-      background-color: rgba(74, 108, 247, 0.1);
-    }
-  }
-  
-  &.register {
-    background-color: #4a6cf7;
-    color: white;
-    margin-left: 1rem;
-    
-    &:hover {
-      background-color: #2e3ec9;
-    }
-  }
+.hover\:bg-primary-700:hover {
+  background-color: #4338ca;
 }
 
-.user-menu {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
+.transition-colors {
+  transition: background-color 0.3s, color 0.3s;
 }
 
-.user-greeting {
-  font-weight: 500;
+// Custom animations for mobile menu
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
-.logout-btn {
-  background-color: transparent;
-  border: 1px solid #ef4444;
-  color: #ef4444;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  
-  &:hover {
-    background-color: #ef4444;
-    color: white;
-  }
-}
-
-.mobile-menu-toggle {
-  display: none;
-  flex-direction: column;
-  gap: 6px;
-  cursor: pointer;
-  
-  span {
-    display: block;
-    width: 30px;
-    height: 3px;
-    background-color: #333;
-    border-radius: 3px;
-    transition: all 0.3s ease;
-  }
-}
-
-.mobile-nav {
-  display: none;
-  flex-direction: column;
-  background-color: white;
-  padding: 1rem;
-  gap: 1.5rem;
-  
-  &.open {
-    display: flex;
-  }
-  
-  .nav-link, .auth-btn {
-    padding: 0.8rem 0;
-    border-bottom: 1px solid #eee;
-  }
-  
-  .auth-btn {
-    text-align: center;
-    margin-left: 0;
-  }
-  
-  .user-info {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    padding-top: 1rem;
-    border-top: 1px solid #eee;
-  }
-}
-
-/* Media Queries for Responsive Design */
-@media (max-width: 768px) {
-  .desktop-nav {
-    display: none;
-  }
-  
-  .mobile-menu-toggle {
-    display: flex;
-  }
-}
-
-@media (min-width: 769px) {
-  .mobile-nav {
-    display: none !important;
-  }
+#mobile-menu.block {
+  animation: fadeIn 0.3s ease-in-out;
 }

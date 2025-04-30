@@ -10,127 +10,131 @@ import { UserRole } from '../../models/user.model';
   styleUrls: ['./auth.component.scss']
 })
 export class AuthComponent implements OnInit {
-  isLoginMode = true;
   loginForm: FormGroup;
   registerForm: FormGroup;
-  isSubmitting = false;
-  errorMessage = '';
-  returnUrl = '/';
-  UserRole = UserRole; // Expose enum to template
+  isLogin = true; // Default to login view
+  loading = false;
+  submitted = false;
+  returnUrl: string = '/';
+  error: string = '';
   
   constructor(
-    private authService: AuthService,
     private formBuilder: FormBuilder,
+    private route: ActivatedRoute,
     private router: Router,
-    private route: ActivatedRoute
+    private authService: AuthService
   ) {
     // Initialize forms
     this.loginForm = this.formBuilder.group({
-      username: ['', [Validators.required]],
+      username: ['', [Validators.required, Validators.minLength(3)]],
       password: ['', [Validators.required, Validators.minLength(6)]]
     });
     
     this.registerForm = this.formBuilder.group({
-      username: ['', [Validators.required]],
+      name: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
+      username: ['', [Validators.required, Validators.minLength(3)]],
       password: ['', [Validators.required, Validators.minLength(6)]],
-      confirmPassword: ['', [Validators.required]],
-      fullName: ['', [Validators.required]],
-      role: [UserRole.CUSTOMER, [Validators.required]],
-      phone: [''],
-      address: ['']
+      confirmPassword: ['', Validators.required],
+      role: [UserRole.CUSTOMER, Validators.required]
     }, {
-      validators: this.passwordMatchValidator
+      validator: this.mustMatch('password', 'confirmPassword')
     });
   }
-  
+
   ngOnInit(): void {
     // Get return url from route parameters or default to '/'
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
     
-    // If already logged in, redirect to returnUrl
+    // Redirect if already logged in
     if (this.authService.currentUserValue) {
-      this.router.navigate([this.returnUrl]);
+      this.router.navigate(['/']);
     }
-  }
-  
-  toggleMode(): void {
-    this.isLoginMode = !this.isLoginMode;
-    this.errorMessage = '';
-  }
-  
-  onLoginSubmit(): void {
-    // Reset errors
-    this.errorMessage = '';
     
-    // Form validation
+    // Check if we should show registration form directly
+    this.route.url.subscribe(segments => {
+      if (segments.length > 0 && segments[0].path === 'register') {
+        this.isLogin = false;
+      }
+    });
+  }
+  
+  // Custom validator to check if passwords match
+  mustMatch(controlName: string, matchingControlName: string) {
+    return (formGroup: FormGroup) => {
+      const control = formGroup.controls[controlName];
+      const matchingControl = formGroup.controls[matchingControlName];
+
+      if (matchingControl.errors && !matchingControl.errors['mustMatch']) {
+        return;
+      }
+
+      if (control.value !== matchingControl.value) {
+        matchingControl.setErrors({ mustMatch: true });
+      } else {
+        matchingControl.setErrors(null);
+      }
+    };
+  }
+  
+  // Convenience getters for easy access to form fields
+  get lf() { return this.loginForm.controls; }
+  get rf() { return this.registerForm.controls; }
+  
+  onLoginSubmit() {
+    this.submitted = true;
+    
+    // Stop if form is invalid
     if (this.loginForm.invalid) {
       return;
     }
     
-    this.isSubmitting = true;
-    
+    this.loading = true;
     this.authService.login({
-      username: this.loginForm.value.username,
-      password: this.loginForm.value.password
+      username: this.lf['username'].value,
+      password: this.lf['password'].value
     }).subscribe({
       next: () => {
         this.router.navigate([this.returnUrl]);
       },
-      error: (error) => {
-        this.errorMessage = error.message || 'Login failed. Please check your credentials.';
-        this.isSubmitting = false;
+      error: error => {
+        this.error = error;
+        this.loading = false;
       }
     });
   }
   
-  onRegisterSubmit(): void {
-    // Reset errors
-    this.errorMessage = '';
+  onRegisterSubmit() {
+    this.submitted = true;
     
-    // Form validation
+    // Stop if form is invalid
     if (this.registerForm.invalid) {
       return;
     }
     
-    // Check if passwords match
-    if (this.registerForm.value.password !== this.registerForm.value.confirmPassword) {
-      this.errorMessage = 'Passwords do not match';
-      return;
-    }
+    this.loading = true;
     
-    this.isSubmitting = true;
-    
+    // Create user object from form values
     this.authService.register({
-      username: this.registerForm.value.username,
-      email: this.registerForm.value.email,
-      password: this.registerForm.value.password,
-      fullName: this.registerForm.value.fullName,
-      role: this.registerForm.value.role,
-      phone: this.registerForm.value.phone,
-      address: this.registerForm.value.address
+      name: this.rf['name'].value,
+      email: this.rf['email'].value,
+      username: this.rf['username'].value,
+      password: this.rf['password'].value,
+      role: this.rf['role'].value
     }).subscribe({
       next: () => {
         this.router.navigate([this.returnUrl]);
       },
-      error: (error) => {
-        this.errorMessage = error.message || 'Registration failed. Please try again.';
-        this.isSubmitting = false;
+      error: error => {
+        this.error = error;
+        this.loading = false;
       }
     });
   }
   
-  // Custom validator to check password match
-  passwordMatchValidator(formGroup: FormGroup) {
-    const password = formGroup.get('password')?.value;
-    const confirmPassword = formGroup.get('confirmPassword')?.value;
-    
-    if (password !== confirmPassword) {
-      formGroup.get('confirmPassword')?.setErrors({ passwordMismatch: true });
-      return { passwordMismatch: true };
-    } else {
-      formGroup.get('confirmPassword')?.setErrors(null);
-      return null;
-    }
+  toggleView() {
+    this.isLogin = !this.isLogin;
+    this.submitted = false;
+    this.error = '';
   }
 }

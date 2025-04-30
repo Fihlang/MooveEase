@@ -1,87 +1,124 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject, Observable, throwError } from 'rxjs';
+import { catchError, map, tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
-import { BehaviorSubject, Observable, map, tap } from 'rxjs';
+import { User, LoginRequest, RegisterRequest } from '../models/user.model';
 import { environment } from '../../environments/environment';
-import { LoginRequest, RegisterRequest, User, UserRole } from '../models/user.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private currentUserSubject = new BehaviorSubject<User | null>(null);
-  public currentUser = this.currentUserSubject.asObservable();
-  private apiUrl = `${environment.apiUrl}/auth`;
-  
+  private currentUserSubject: BehaviorSubject<User | null>;
+  public currentUser: Observable<User | null>;
+
   constructor(
     private http: HttpClient,
     private router: Router
   ) {
-    // Check if user is already logged in
-    this.getCurrentUser().subscribe();
+    // Retrieve user from localStorage on init if exists
+    const storedUser = localStorage.getItem('currentUser');
+    this.currentUserSubject = new BehaviorSubject<User | null>(
+      storedUser ? JSON.parse(storedUser) : null
+    );
+    this.currentUser = this.currentUserSubject.asObservable();
   }
-  
-  // Get the current user value without subscribing
-  public get userValue(): User | null {
+
+  public get currentUserValue(): User | null {
     return this.currentUserSubject.value;
   }
-  
-  // Check if user is logged in
-  public isLoggedIn(): boolean {
+
+  public get isLoggedIn(): boolean {
     return !!this.currentUserSubject.value;
   }
-  
-  // Check if user has specific role(s)
-  public hasRole(roles: UserRole | UserRole[]): boolean {
+
+  public get isAdmin(): boolean {
     const user = this.currentUserSubject.value;
-    if (!user) return false;
-    
-    if (Array.isArray(roles)) {
-      return roles.includes(user.role);
-    } else {
-      return user.role === roles;
-    }
+    return !!user && user.role === 'admin';
   }
-  
-  // Register a new user
-  register(userData: RegisterRequest): Observable<User> {
-    return this.http.post<User>(`${this.apiUrl}/register`, userData).pipe(
-      tap(user => {
-        this.currentUserSubject.next(user);
-      })
-    );
+
+  public get isMover(): boolean {
+    const user = this.currentUserSubject.value;
+    return !!user && user.role === 'mover';
   }
-  
-  // Login user
+
+  public get isCustomer(): boolean {
+    const user = this.currentUserSubject.value;
+    return !!user && user.role === 'customer';
+  }
+
   login(credentials: LoginRequest): Observable<User> {
-    return this.http.post<User>(`${this.apiUrl}/login`, credentials).pipe(
-      tap(user => {
-        this.currentUserSubject.next(user);
-      })
-    );
+    return this.http.post<User>(`${environment.apiUrl}/auth/login`, credentials)
+      .pipe(
+        tap(user => {
+          // Store user details and jwt token in local storage
+          localStorage.setItem('currentUser', JSON.stringify(user));
+          this.currentUserSubject.next(user);
+          return user;
+        }),
+        catchError(error => {
+          console.error('Login error:', error);
+          return throwError(() => new Error(error.error?.message || 'Login failed'));
+        })
+      );
   }
-  
-  // Logout user
-  logout(): Observable<void> {
-    return this.http.post<void>(`${this.apiUrl}/logout`, {}).pipe(
-      tap(() => {
-        this.currentUserSubject.next(null);
-        this.router.navigate(['/']);
-      })
-    );
+
+  register(userDetails: RegisterRequest): Observable<User> {
+    return this.http.post<User>(`${environment.apiUrl}/auth/register`, userDetails)
+      .pipe(
+        tap(user => {
+          // Store user details and jwt token in local storage
+          localStorage.setItem('currentUser', JSON.stringify(user));
+          this.currentUserSubject.next(user);
+          return user;
+        }),
+        catchError(error => {
+          console.error('Registration error:', error);
+          return throwError(() => new Error(error.error?.message || 'Registration failed'));
+        })
+      );
   }
-  
-  // Get current user info
-  getCurrentUser(): Observable<User | null> {
-    return this.http.get<User>(`${this.apiUrl}/current-user`).pipe(
-      tap(user => {
-        this.currentUserSubject.next(user);
-      }),
-      // If the request fails, handle the error gracefully
-      map(user => user, () => {
-        this.currentUserSubject.next(null);
-        return null;
-      })
-    );
+
+  logout(): Observable<any> {
+    return this.http.post<any>(`${environment.apiUrl}/auth/logout`, {})
+      .pipe(
+        tap(() => {
+          // Remove user from local storage
+          localStorage.removeItem('currentUser');
+          this.currentUserSubject.next(null);
+        }),
+        catchError(error => {
+          console.error('Logout error:', error);
+          // Even if the API call fails, clear the user from local storage
+          localStorage.removeItem('currentUser');
+          this.currentUserSubject.next(null);
+          return throwError(() => new Error(error.error?.message || 'Logout failed'));
+        })
+      );
+  }
+
+  refreshToken(): Observable<User> {
+    return this.http.post<User>(`${environment.apiUrl}/auth/refresh-token`, {})
+      .pipe(
+        tap(user => {
+          localStorage.setItem('currentUser', JSON.stringify(user));
+          this.currentUserSubject.next(user);
+          return user;
+        }),
+        catchError(error => {
+          console.error('Token refresh error:', error);
+          // If refresh fails, log the user out
+          this.handleAuthError();
+          return throwError(() => new Error(error.error?.message || 'Token refresh failed'));
+        })
+      );
+  }
+
+  // Handle authentication errors (expired token, etc.)
+  private handleAuthError(): void {
+    localStorage.removeItem('currentUser');
+    this.currentUserSubject.next(null);
+    this.router.navigate(['/auth/login']);
   }
 }
